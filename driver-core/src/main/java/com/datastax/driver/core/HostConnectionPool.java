@@ -172,12 +172,12 @@ class HostConnectionPool implements Connection.Owner {
             public ListenableFuture<Void> apply(Throwable t) throws Exception {
                 // Propagate these exceptions because they mean no connection will ever succeed. They will be handled
                 // accordingly in SessionManager#maybeAddPool.
-                Throwables.propagateIfInstanceOf(t, ClusterNameMismatchException.class);
-                Throwables.propagateIfInstanceOf(t, UnsupportedProtocolVersionException.class);
-                Throwables.propagateIfInstanceOf(t, AuthenticationException.class);
+                Throwables.throwIfInstanceOf(t, ClusterNameMismatchException.class);
+                Throwables.throwIfInstanceOf(t, UnsupportedProtocolVersionException.class);
+                Throwables.throwIfInstanceOf(t, AuthenticationException.class);
 
                 // We don't want to swallow Errors either as they probably indicate a more serious issue (OOME...)
-                Throwables.propagateIfInstanceOf(t, Error.class);
+                Throwables.throwIfInstanceOf(t, Error.class);
 
                 // Otherwise, log the exception but return success.
                 // The pool will simply ignore this connection when it sees that it's been closed.

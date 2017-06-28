@@ -595,7 +595,8 @@ public abstract class TestUtils {
             return InetAddress.getByName(IP_PREFIX + i);
         } catch (UnknownHostException e) {
             // should never happen
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -709,13 +710,15 @@ public abstract class TestUtils {
             ss.setReuseAddress(true);
             return ss.getLocalPort();
         } catch (IOException e) {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         } finally {
             if (ss != null) {
                 try {
                     ss.close();
                 } catch (IOException e) {
-                    Throwables.propagate(e);
+                    Throwables.throwIfUnchecked(e);
+                    throw new RuntimeException(e);
                 }
             }
         }

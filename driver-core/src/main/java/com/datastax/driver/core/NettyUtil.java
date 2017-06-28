@@ -133,7 +133,9 @@ class NettyUtil {
             try {
                 return EPOLL_EVENT_LOOP_GROUP_CONSTRUCTOR.newInstance(0, factory);
             } catch (Exception e) {
-                throw Throwables.propagate(e); // should not happen
+                // should not happen
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
         } else {
             return new NioEventLoopGroup(0, factory);

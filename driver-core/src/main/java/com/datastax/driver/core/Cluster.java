@@ -351,7 +351,8 @@ public class Cluster implements Closeable {
                                 String.format("Error executing \"%s\" (%s). Check that your keyspace name is valid",
                                         useQuery, e.getMessage()));
                     }
-                    throw Throwables.propagate(t);
+                    Throwables.throwIfUnchecked(t);
+                    throw new RuntimeException(t);
                 }
             });
             return Futures.transform(withErrorHandling, Functions.constant(session));

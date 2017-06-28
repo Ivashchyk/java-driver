@@ -803,7 +803,8 @@ public class CCMTestsSupport {
             } catch (Exception e) {
                 errorOut();
                 LOGGER.error("Could not execute statement: " + stmt, e);
-                Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
         }
     }
@@ -850,7 +851,8 @@ public class CCMTestsSupport {
                 try {
                     contactPoints.add(InetAddress.getByName(ipOfNode(n)));
                 } catch (UnknownHostException e) {
-                    Throwables.propagate(e);
+                    Throwables.throwIfUnchecked(e);
+                    throw new RuntimeException(e);
                 }
                 n++;
             }
@@ -979,7 +981,8 @@ public class CCMTestsSupport {
             } catch (Exception e) {
                 errorOut();
                 LOGGER.error("Could not create test keyspace", e);
-                Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
         }
     }

@@ -1436,7 +1436,8 @@ public class HostConnectionPoolTest extends ScassandraTestBase.PerClassCluster {
             try {
                 return Uninterruptibles.getUninterruptibly(connectionFuture, 500, MILLISECONDS);
             } catch (ExecutionException e) {
-                throw Throwables.propagate(e.getCause());
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             } catch (TimeoutException e) {
                 fail("Timed out getting connection");
                 return null; // never reached
@@ -1449,7 +1450,8 @@ public class HostConnectionPoolTest extends ScassandraTestBase.PerClassCluster {
             try {
                 assertThat(Uninterruptibles.getUninterruptibly(connectionFuture)).isNotNull();
             } catch (ExecutionException e) {
-                Throwables.propagate(e.getCause());
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
             if (state.compareAndSet(State.START, State.COMPLETED)) {
                 connection.dispatcher.removeHandler(responseHandler, true);

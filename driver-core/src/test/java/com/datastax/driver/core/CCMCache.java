@@ -329,7 +329,8 @@ public class CCMCache {
             try {
                 ccm = CACHE.get(key);
             } catch (ExecutionException e) {
-                throw Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
         }
         logCache();

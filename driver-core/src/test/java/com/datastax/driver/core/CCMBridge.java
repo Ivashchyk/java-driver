@@ -682,7 +682,8 @@ public class CCMBridge implements CCMAccess {
             try {
                 closer.close();
             } catch (IOException e) {
-                Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
         }
         return sw.toString();
@@ -1079,12 +1080,14 @@ public class CCMBridge implements CCMAccess {
                     }
                 }
             } catch (IOException e) {
-                Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             } finally {
                 try {
                     closer.close();
                 } catch (IOException e) {
-                    Throwables.propagate(e);
+                    Throwables.throwIfUnchecked(e);
+                    throw new RuntimeException(e);
                 }
             }
         }

@@ -28,6 +28,8 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * A compatibility layer to support a wide range of Guava versions.
  * <p>
@@ -64,7 +66,6 @@ public abstract class GuavaCompatibility {
      * {@code input} or, if the primary input fails, from the {@code Future}
      * provided by the {@code fallback}.
      *
-     * @see Futures#withFallback(ListenableFuture, FutureFallback)
      * @see Futures#catchingAsync(ListenableFuture, Class, AsyncFunction)
      */
     public abstract <V> ListenableFuture<V> withFallback(ListenableFuture<? extends V> input,
@@ -75,7 +76,6 @@ public abstract class GuavaCompatibility {
      * {@code input} or, if the primary input fails, from the {@code Future}
      * provided by the {@code fallback}.
      *
-     * @see Futures#withFallback(ListenableFuture, FutureFallback, Executor)
      * @see Futures#catchingAsync(ListenableFuture, Class, AsyncFunction, Executor)
      */
     public abstract <V> ListenableFuture<V> withFallback(ListenableFuture<? extends V> input,
@@ -88,7 +88,6 @@ public abstract class GuavaCompatibility {
      * applying the given {@code AsyncFunction} to the result of the original
      * {@code Future}.
      *
-     * @see Futures#transform(ListenableFuture, AsyncFunction)
      * @see Futures#transformAsync(ListenableFuture, AsyncFunction)
      */
     public abstract <I, O> ListenableFuture<O> transformAsync(ListenableFuture<I> input,
@@ -101,7 +100,6 @@ public abstract class GuavaCompatibility {
      * applying the given {@code AsyncFunction} to the result of the original
      * {@code Future}.
      *
-     * @see Futures#transform(ListenableFuture, AsyncFunction, Executor)
      * @see Futures#transformAsync(ListenableFuture, AsyncFunction, Executor)
      */
     public abstract <I, O> ListenableFuture<O> transformAsync(ListenableFuture<I> input,
@@ -113,7 +111,7 @@ public abstract class GuavaCompatibility {
      * according to <a href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1"
      * >the rules for type arguments</a> introduced with Java generics.
      *
-     * @see TypeToken#isAssignableFrom(Type)
+     * @see TypeToken#isSubtypeOf(Type)
      * @see TypeToken#isSupertypeOf(Type)
      */
     public abstract boolean isSupertypeOf(TypeToken<?> target, TypeToken<?> argument);
@@ -122,7 +120,7 @@ public abstract class GuavaCompatibility {
      * Returns an {@link Executor} that runs each task in the thread that invokes
      * {@link Executor#execute execute}, as in {@link java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy}.
      *
-     * @see MoreExecutors#sameThreadExecutor()
+     * @see MoreExecutors#newDirectExecutorService()
      * @see MoreExecutors#directExecutor()
      */
     public abstract Executor sameThreadExecutor();
@@ -145,44 +143,37 @@ public abstract class GuavaCompatibility {
         @Override
         public <V> ListenableFuture<V> withFallback(ListenableFuture<? extends V> input,
                                                     final AsyncFunction<Throwable, V> fallback) {
-            return Futures.withFallback(input, new FutureFallback<V>() {
-                @Override
-                public ListenableFuture<V> create(Throwable t) throws Exception {
-                    return fallback.apply(t);
-                }
-            });
+            return withFallback(input, fallback, MoreExecutors.directExecutor());
         }
 
         @Override
         public <V> ListenableFuture<V> withFallback(ListenableFuture<? extends V> input,
                                                     final AsyncFunction<Throwable, V> fallback,
                                                     Executor executor) {
-            return Futures.withFallback(input, new FutureFallback<V>() {
-                @Override
-                public ListenableFuture<V> create(Throwable t) throws Exception {
-                    return fallback.apply(t);
-                }
-            }, executor);
+            checkNotNull(fallback);
+            return Futures.catchingAsync(
+                input, Throwable.class, t -> checkNotNull(fallback.apply(t), "AsyncFunction.apply returned null instead of a "
+                    + "Future. Did you mean to return immediateFuture(null)?"), executor);
         }
 
         @Override
         public <I, O> ListenableFuture<O> transformAsync(ListenableFuture<I> input, AsyncFunction<? super I, ? extends O> function) {
-            return Futures.transform(input, function);
+            return Futures.transformAsync(input, function);
         }
 
         @Override
         public <I, O> ListenableFuture<O> transformAsync(ListenableFuture<I> input, AsyncFunction<? super I, ? extends O> function, Executor executor) {
-            return Futures.transform(input, function, executor);
+            return Futures.transformAsync(input, function, executor);
         }
 
         @Override
         public boolean isSupertypeOf(TypeToken<?> target, TypeToken<?> argument) {
-            return target.isAssignableFrom(argument);
+            return target.isSubtypeOf(argument);
         }
 
         @Override
         public Executor sameThreadExecutor() {
-            return MoreExecutors.sameThreadExecutor();
+            return MoreExecutors.newDirectExecutorService();
         }
     }
 

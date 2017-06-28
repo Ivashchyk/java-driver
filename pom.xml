@@ -50,7 +50,7 @@
         <log4j.version>1.2.17</log4j.version>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-log4j12.version>1.7.25</slf4j-log4j12.version>
-        <guava.version>19.0</guava.version>
+        <guava.version>21.0</guava.version>
         <netty.version>4.0.47.Final</netty.version>
         <metrics.version>3.2.2</metrics.version>
         <snappy.version>1.1.2.6</snappy.version>
@@ -611,41 +611,6 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>clirr-maven-plugin</artifactId>
-                    <!-- Last version compatible with Java 6 -->
-                    <version>2.7</version>
-                    <executions>
-                        <execution>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <comparisonVersion>3.2.0</comparisonVersion>
-                        <ignoredDifferencesFile>../clirr-ignores.xml</ignoredDifferencesFile>
-                        <excludes>
-                            <exclude>com/datastax/shaded/**</exclude>
-                        </excludes>
-                    </configuration>
-                    <!--
-                    Workaround to make clirr plugin work with Java 8.
-                    The bug is actually in the BCEL library,
-                    see https://issues.apache.org/jira/browse/BCEL-173.
-                    See also https://github.com/RichardWarburton/lambda-behave/issues/31#issuecomment-86052095
-                    -->
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.google.code.findbugs</groupId>
-                            <artifactId>bcel-findbugs</artifactId>
-                            <version>6.0</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-
-                <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
                     <version>3.0</version>
@@ -868,8 +833,12 @@ limitations under the License.
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>clirr-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
 
         </plugins>

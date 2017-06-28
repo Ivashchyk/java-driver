@@ -468,7 +468,8 @@ public class DefaultPropertyMapper implements PropertyMapper {
             try {
                 beanInfo = Introspector.getBeanInfo(clazz, clazz.getSuperclass());
             } catch (IntrospectionException e) {
-                throw Throwables.propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             }
             for (PropertyDescriptor property : beanInfo.getPropertyDescriptors()) {
                 if (!properties.containsKey(property.getName())) {

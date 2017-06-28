@@ -15,11 +15,15 @@
  */
 package com.datastax.driver.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-
-import java.util.*;
+import com.google.common.base.Predicate;
 
 /**
  * Base class for Tables and Materialized Views metadata.
