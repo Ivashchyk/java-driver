@@ -20,7 +20,6 @@ import com.datastax.driver.core.exceptions.*;
 import com.datastax.driver.core.policies.ConstantReconnectionPolicy;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.*;
 import org.scassandra.cql.PrimitiveType;
 import org.scassandra.http.client.PrimingRequest;
@@ -1436,7 +1435,6 @@ public class HostConnectionPoolTest extends ScassandraTestBase.PerClassCluster {
             try {
                 return Uninterruptibles.getUninterruptibly(connectionFuture, 500, MILLISECONDS);
             } catch (ExecutionException e) {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             } catch (TimeoutException e) {
                 fail("Timed out getting connection");
@@ -1450,7 +1448,6 @@ public class HostConnectionPoolTest extends ScassandraTestBase.PerClassCluster {
             try {
                 assertThat(Uninterruptibles.getUninterruptibly(connectionFuture)).isNotNull();
             } catch (ExecutionException e) {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             }
             if (state.compareAndSet(State.START, State.COMPLETED)) {

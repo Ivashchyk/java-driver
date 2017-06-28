@@ -16,7 +16,6 @@
 package com.datastax.driver.core;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -682,7 +681,6 @@ public class CCMBridge implements CCMAccess {
             try {
                 closer.close();
             } catch (IOException e) {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             }
         }
@@ -1080,13 +1078,11 @@ public class CCMBridge implements CCMAccess {
                     }
                 }
             } catch (IOException e) {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             } finally {
                 try {
                     closer.close();
                 } catch (IOException e) {
-                    Throwables.throwIfUnchecked(e);
                     throw new RuntimeException(e);
                 }
             }

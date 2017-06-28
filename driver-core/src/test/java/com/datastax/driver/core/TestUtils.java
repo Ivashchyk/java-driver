@@ -18,7 +18,6 @@ package com.datastax.driver.core;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.datastax.driver.core.policies.WhiteListPolicy;
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.Uninterruptibles;
@@ -595,7 +594,6 @@ public abstract class TestUtils {
             return InetAddress.getByName(IP_PREFIX + i);
         } catch (UnknownHostException e) {
             // should never happen
-            Throwables.throwIfUnchecked(e);
             throw new RuntimeException(e);
         }
     }
@@ -710,14 +708,12 @@ public abstract class TestUtils {
             ss.setReuseAddress(true);
             return ss.getLocalPort();
         } catch (IOException e) {
-            Throwables.throwIfUnchecked(e);
             throw new RuntimeException(e);
         } finally {
             if (ss != null) {
                 try {
                     ss.close();
                 } catch (IOException e) {
-                    Throwables.throwIfUnchecked(e);
                     throw new RuntimeException(e);
                 }
             }

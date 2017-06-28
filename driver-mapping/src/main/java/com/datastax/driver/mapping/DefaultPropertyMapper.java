@@ -17,7 +17,6 @@ package com.datastax.driver.mapping;
 
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.mapping.annotations.*;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
@@ -468,7 +467,6 @@ public class DefaultPropertyMapper implements PropertyMapper {
             try {
                 beanInfo = Introspector.getBeanInfo(clazz, clazz.getSuperclass());
             } catch (IntrospectionException e) {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             }
             for (PropertyDescriptor property : beanInfo.getPropertyDescriptors()) {

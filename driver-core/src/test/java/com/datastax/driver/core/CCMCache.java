@@ -15,7 +15,6 @@
  */
 package com.datastax.driver.core;
 
-import com.google.common.base.Throwables;
 import com.google.common.cache.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -329,7 +328,6 @@ public class CCMCache {
             try {
                 ccm = CACHE.get(key);
             } catch (ExecutionException e) {
-                Throwables.throwIfUnchecked(e);
                 throw new RuntimeException(e);
             }
         }

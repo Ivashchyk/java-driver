@@ -851,7 +851,6 @@ public class CCMTestsSupport {
                 try {
                     contactPoints.add(InetAddress.getByName(ipOfNode(n)));
                 } catch (UnknownHostException e) {
-                    Throwables.throwIfUnchecked(e);
                     throw new RuntimeException(e);
                 }
                 n++;
